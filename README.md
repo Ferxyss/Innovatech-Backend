@@ -130,7 +130,6 @@ Backend-deploy/
 
 # Integrantes
 
--   Claudio Rojas
 -   Fernanda Paredes
 
 ------------------------------------------------------------------------
