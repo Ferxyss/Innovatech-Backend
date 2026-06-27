@@ -122,8 +122,8 @@ docker logs api_despachos
 
 ## Seguridad Implementada
 
-- Usuario no root.
-- Backend privado.
+- Usuario no root
+- Backend privado
 - Base de datos privada.
 - Security Groups segmentados.
 - Comunicación interna privada.
