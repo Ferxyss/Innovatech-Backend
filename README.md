@@ -1,156 +1,140 @@
 # Innovatech Backend
 
-Backend del sistema Innovatech desarrollado para la Evaluación Parcial N°2 de la asignatura Introducción a Herramientas DevOps.
+Backend del sistema **Innovatech Chile**, desarrollado para la
+Evaluación Parcial de la asignatura **Introducción a Herramientas
+DevOps**.
 
-La solución implementa microservicios Spring Boot desplegados en AWS EC2 mediante Docker, Docker Compose y GitHub Actions.
+La solución está basada en una arquitectura de microservicios
+desarrollada con Spring Boot y desplegada sobre **Amazon EKS
+(Kubernetes)**. El proceso de integración y despliegue continuo se
+encuentra automatizado mediante **GitHub Actions**, mientras que las
+imágenes Docker son almacenadas en **Amazon Elastic Container Registry
+(ECR)**.
 
----
+------------------------------------------------------------------------
 
-## Tecnologías Utilizadas
+# Tecnologías utilizadas
 
-- Spring Boot
-- Java 17
-- Maven
-- Docker
-- Docker Compose
-- MySQL 8
-- Docker Hub
-- GitHub Actions
-- AWS EC2
-- Linux
+-   Java 17
+-   Spring Boot
+-   Maven
+-   Docker
+-   Kubernetes
+-   Amazon EKS
+-   Amazon ECR
+-   GitHub Actions
+-   MySQL 8
+-   AWS Cloud
 
----
+------------------------------------------------------------------------
 
-## Características Implementadas
+# Arquitectura
 
-- Arquitectura basada en microservicios.
-- Dockerfile multi-stage.
-- Usuario no root.
-- Docker Compose para orquestación.
-- Persistencia de datos mediante Docker Volumes.
-- CI/CD automatizado.
-- Backend privado en AWS.
-- Comunicación segura mediante Security Groups.
-- Integración con frontend público.
+El backend está compuesto por:
 
----
+-   Microservicio de Ventas.
+-   Microservicio de Despachos.
+-   Base de datos MySQL.
 
-## Arquitectura
+Cada servicio se ejecuta como un Deployment independiente dentro del
+clúster de Kubernetes y se comunica mediante Services de tipo ClusterIP.
 
-La solución implementa:
+------------------------------------------------------------------------
 
-- EC2 pública para Frontend.
-- EC2 privada para Backend.
-- EC2 privada para Base de Datos.
-- Comunicación interna mediante IP privada.
-- Segmentación de red mediante Security Groups.
+# Características implementadas
 
----
+-   Arquitectura basada en microservicios.
+-   Contenedores Docker para cada servicio.
+-   Despliegue en Amazon EKS.
+-   Deployments y Services independientes.
+-   Horizontal Pod Autoscaler (HPA).
+-   Pipeline CI/CD con GitHub Actions.
+-   Imágenes almacenadas en Amazon ECR.
+-   Despliegue automático mediante Rolling Update.
+-   Gestión segura de credenciales con GitHub Secrets.
 
-## Servicios Backend
+------------------------------------------------------------------------
 
-El backend se compone de:
+# Pipeline CI/CD
 
-- Microservicio Ventas.
-- Microservicio Despachos.
-- Base de datos MySQL.
+El flujo automatizado realiza:
 
----
+1.  Descarga del código desde GitHub.
+2.  Compilación del proyecto con Maven.
+3.  Construcción de imágenes Docker.
+4.  Publicación en Amazon ECR.
+5.  Conexión al clúster Amazon EKS.
+6.  Actualización automática de los Deployments.
 
-## Persistencia de Datos
+------------------------------------------------------------------------
 
-La persistencia se implementó utilizando Docker Volumes.
+# Kubernetes
 
-Tipo utilizado:
+Recursos utilizados:
 
-```bash
-Named Volume
-```
+-   Deployment de Ventas.
+-   Deployment de Despachos.
+-   Deployment de MySQL.
+-   Services internos.
+-   Horizontal Pod Autoscaler (HPA).
 
-Objetivo:
+Los manifiestos YAML se encuentran en la carpeta **k8s/**.
 
-- Mantener la información aunque los contenedores sean reiniciados.
-- Facilitar administración y continuidad operativa.
-- Separar los datos del ciclo de vida del contenedor.
+------------------------------------------------------------------------
 
----
+# Variables de entorno
 
-## CI/CD
+La configuración de la aplicación utiliza variables de entorno definidas
+en Kubernetes para la conexión con MySQL:
 
-El pipeline realiza automáticamente:
+-   SPRING_DATASOURCE_URL
+-   SPRING_DATASOURCE_USERNAME
+-   SPRING_DATASOURCE_PASSWORD
 
-1. Build de imágenes Docker.
-2. Push hacia Docker Hub.
-3. Deploy automático en EC2 Backend.
-4. Actualización automática de contenedores.
+------------------------------------------------------------------------
 
----
+# Ejecución local
 
-## Docker Hub
-
-Imágenes utilizadas:
-
-```bash
-ferxyss/innovatech-ventas:latest
-ferxyss/innovatech-despachos:latest
-```
-
----
-
-## Ejecución Local
-
-Levantar servicios:
-
-```bash
+``` bash
+mvn clean package
+docker build -t innovatech-backend .
 docker-compose up -d
 ```
 
-Ver contenedores:
+------------------------------------------------------------------------
 
-```bash
-docker ps
+# Seguridad
+
+-   GitHub Secrets para credenciales AWS.
+-   Imágenes privadas en Amazon ECR.
+-   Comunicación interna mediante Kubernetes Services.
+-   Base de datos accesible solo desde el clúster.
+-   Credenciales fuera del repositorio.
+
+------------------------------------------------------------------------
+
+# Estructura del proyecto
+
+``` text
+Backend-deploy/
+├── back-Ventas_SpringBoot/
+├── back-Despachos_SpringBoot/
+├── k8s/
+├── .github/
+│   └── workflows/
+│       └── deploy-backend.yml
+└── docker-compose.yml
 ```
 
-Ver logs:
+------------------------------------------------------------------------
 
-```bash
-docker logs api_ventas
-docker logs api_despachos
-```
+# Integrantes
 
----
+-   Claudio Rojas
+-   Fernanda Paredes
 
-## Seguridad Implementada
+------------------------------------------------------------------------
 
-- Usuario no root
-- Backend privado
-- Base de datos privada.
-- Security Groups segmentados.
-- Comunicación interna privada.
-- Secrets en GitHub Actions.
-- SSH mediante llave PEM.
-
----
-
-## Integración Front → Back
-
-El frontend consume los endpoints backend utilizando comunicación privada dentro de la VPC de AWS.
-
-Esto permite:
-
-- Mayor seguridad.
-- Menor exposición pública.
-- Escalabilidad.
-- Separación de responsabilidades.
-
----
-
-## Integrantes
-
-- Fernanda Paredes
-
----
-
-## Asignatura
+# Asignatura
 
 **ISY1101 - Introducción a Herramientas DevOps**
